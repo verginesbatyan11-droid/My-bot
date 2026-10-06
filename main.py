@@ -10,7 +10,9 @@ import yt_dlp
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
-TOKEN = "8733776616:AAEDPLDwuxLrm_1FoakNm..." # <-- Ваш полный токен!
+
+# ВСТАВЬТЕ СЮДА ВАШ ПОЛНЫЙ ТОКЕН В КАВЫЧКАХ (без ...)
+TOKEN = "8733776616:AAEDPLDwuxLrm_1FoakNm..." 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("Help")]]
@@ -72,7 +74,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await help_command(update, context)
         return
 
-    # Простая проверка на математические выражения (например: 10 x 10 или 10 * 10)
     clean_text = text.replace('x', '*').replace('Х', '*').replace('х', '*')
     if re.match(r'^\d+\s*[\+\-\*/]\s*\d+$', clean_text):
         try:
@@ -85,7 +86,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = await update.message.reply_text("🔎 Ищу и скачиваю трек, подождите...")
 
     try:
-        # Запускаем скачивание в отдельном потоке с ограничением времени в 60 секунд
         loop = asyncio.get_event_loop()
         file_path, title = await asyncio.wait_for(
             loop.run_in_executor(None, download_audio, text),
@@ -104,10 +104,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await msg.edit_text("❌ Ошибка при сохранении файла.")
 
     except asyncio.TimeoutError:
-        await msg.edit_text("⏱ Время ожидания истекло. Попробуйте отправить прямую ссылку на видео из TikTok!")
+        await msg.edit_text("⏱ Время ожидания истекло. Попробуйте скинуть прямую ссылку на TikTok!")
     except Exception as e:
         logging.error(f"Error downloading: {e}")
-        await msg.edit_text("❌ Не удалось найти или скачать этот трек. Попробуйте ссылку на TikTok!")
+        await msg.edit_text("❌ Не удалось найти или скачать этот трек. Попробуйте ссылку из TikTok!")
 
 if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
